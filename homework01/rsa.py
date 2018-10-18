@@ -1,3 +1,4 @@
+import math
 import random
 
 
@@ -12,7 +13,15 @@ def is_prime(n):
     >>> is_prime(8)
     False
     """
-    # PUT YOUR CODE HERE
+    i = 2
+    limit = int(math.sqrt(n))
+    while i <= limit:
+        if n % i == 0:
+            print("False")
+            quit()
+        else:
+            i += 1
+    print("True")
     pass
 
 
