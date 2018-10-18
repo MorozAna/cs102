@@ -18,7 +18,6 @@ def is_prime(n):
     while i <= limit:
         if n % i == 0:
             return False
-            quit()
         else:
             i += 1
     return True
