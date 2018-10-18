@@ -17,11 +17,11 @@ def is_prime(n):
     limit = int(math.sqrt(n))
     while i <= limit:
         if n % i == 0:
-            print("False")
+            return False
             quit()
         else:
             i += 1
-    print("True")
+    return True
     pass
 
 
