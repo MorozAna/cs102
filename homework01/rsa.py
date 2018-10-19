@@ -52,14 +52,12 @@ def multiplicative_inverse(e, phi):
     23
     """
     a = []
-    b = []
     div = []
     x = []
     y = []
 
     while e % phi != 0:
         a.append(e)
-        b.append(phi)
         div.append(e//phi)
         x.append('')
         y.append('')
@@ -67,7 +65,6 @@ def multiplicative_inverse(e, phi):
         e = phi
         phi = mod
     a.append(e)
-    b.append(phi)
     div.append(e//phi)
     x.append(0)
     y.append(1)
