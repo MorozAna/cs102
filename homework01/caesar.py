@@ -9,7 +9,6 @@ def encrypt_caesar(plaintext):
     >>> encrypt_caesar("")
     ''
     """
-    # PUT YOUR CODE HERE
     ciphertext = ''
     for char in plaintext:
         if (ord(char) >= 65 and ord(char) <= 90) or
@@ -35,7 +34,6 @@ def decrypt_caesar(ciphertext):
     >>> decrypt_caesar("")
     ''
     """
-    # PUT YOUR CODE HERE
     plaintext = ''
     for char in ciphertext:
         if (ord(char) >= 65 and ord(char) <= 90) or
