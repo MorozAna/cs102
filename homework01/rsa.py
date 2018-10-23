@@ -18,8 +18,7 @@ def is_prime(n):
     while i <= limit:
         if n % i == 0:
             return False
-        else:
-            i += 1
+        i += 1
     return True
 
 
@@ -76,6 +75,7 @@ def multiplicative_inverse(e, phi):
         else:
             j -= 1
     d = y[j] % a[0]
+    return (d)
 
 
 def generate_keypair(p, q):
