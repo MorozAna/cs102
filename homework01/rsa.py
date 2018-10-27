@@ -36,8 +36,8 @@ def gcd(a, b):
             a %= b
         else:
             b %= a
-    gcd = a + b
-    return gcd
+    g = a + b
+    return g
 
 
 def multiplicative_inverse(e, phi):
