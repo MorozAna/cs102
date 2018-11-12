@@ -48,7 +48,8 @@ def get_row(values, pos):
     >>> get_row([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (2, 0))
     ['.', '8', '9']
     """
-    pass
+    row, _ = pos
+    return values[row]
 
 
 def get_col(values, pos):
@@ -61,7 +62,8 @@ def get_col(values, pos):
     >>> get_col([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (0, 2))
     ['3', '6', '9']
     """
-    pass
+    _, col = pos
+    return [values[row][col] for row in range(len(values))]
 
 
 def get_block(values, pos):
@@ -75,7 +77,10 @@ def get_block(values, pos):
     >>> get_block(grid, (8, 8))
     ['2', '8', '.', '.', '.', '5', '.', '7', '9']
     """
-    pass
+    row, col = pos
+    block_row = 3 * (row // 3)
+    block_col = 3 * (col // 3)
+    return [values[block_row+r][block_col+c] for r in range(3) for c in range(3)]
 
 
 def find_empty_positions(grid):
