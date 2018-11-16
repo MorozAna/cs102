@@ -16,7 +16,7 @@ def display(values):
     print()
 
 
-def group(values, n):
+def group(values: list, n: int) -> list:
     """
     Сгруппировать значения values в список, состоящий из списков по n элементов
 
@@ -38,7 +38,7 @@ def group(values, n):
     return groups
 
 
-def get_row(values, pos):
+def get_row(values: list, pos: tuple) -> list:
     """ Возвращает все значения для номера строки, указанной в pos
 
     >>> get_row([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']], (0, 0))
@@ -52,7 +52,7 @@ def get_row(values, pos):
     return values[row]
 
 
-def get_col(values, pos):
+def get_col(values: list, pos: tuple) -> list:
     """ Возвращает все значения для номера столбца, указанного в pos
 
     >>> get_col([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']], (0, 0))
@@ -66,7 +66,7 @@ def get_col(values, pos):
     return [values[row][col] for row in range(len(values))]
 
 
-def get_block(values, pos):
+def get_block(values: list, pos: tuple) -> list:
     """ Возвращает все значения из квадрата, в который попадает позиция pos
 
     >>> grid = read_sudoku('puzzle1.txt')
@@ -83,7 +83,7 @@ def get_block(values, pos):
     return [values[block_row+r][block_col+c] for r in range(3) for c in range(3)]
 
 
-def find_empty_positions(grid):
+def find_empty_positions(grid: list) -> :
     """ Найти первую свободную позицию в пазле
 
     >>> find_empty_positions([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']])
@@ -100,7 +100,7 @@ def find_empty_positions(grid):
     return None
 
 
-def find_possible_values(grid, pos):
+def find_possible_values(grid: list, pos: tuple) -> set:
     """ Вернуть множество возможных значения для указанной позиции
 
     >>> grid = read_sudoku('puzzle1.txt')
@@ -117,7 +117,7 @@ def find_possible_values(grid, pos):
         set(get_block(grid, pos))
 
 
-def solve(grid):
+def solve(grid: list) -> :
     """ Решение пазла, заданного в grid """
     """ Как решать Судоку?
         1. Найти свободную позицию
@@ -143,7 +143,7 @@ def solve(grid):
     return None
 
 
-def check_solution(solution):
+def check_solution(solution: list) -> bool:
     """ Если решение solution верно, то вернуть True, в противном случае False """
     # TODO: Add doctests with bad puzzles
     for row in range(len(solution)):
@@ -165,7 +165,7 @@ def check_solution(solution):
     return True
 
 
-def generate_sudoku(N):
+def generate_sudoku(N: int) -> list:
     """ Генерация судоку заполненного на N элементов
 
     >>> grid = generate_sudoku(40)
