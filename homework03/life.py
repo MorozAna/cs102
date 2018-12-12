@@ -39,8 +39,8 @@ class GameOfLife:
         self.screen.fill(pygame.Color('white'))
 
         # Создание списка клеток
-        # PUT YOUR CODE HERE
 
+        self.cell_list()
         running = True
         while running:
             for event in pygame.event.get():
@@ -50,8 +50,9 @@ class GameOfLife:
 
             # Отрисовка списка клеток
             # Выполнение одного шага игры (обновление состояния ячеек)
-            # PUT YOUR CODE HERE
 
+            self.draw_cell_list(self.clist)
+            self.update_cell_list(self.clist)
             pygame.display.flip()
             clock.tick(self.speed)
         pygame.quit()
@@ -64,7 +65,12 @@ class GameOfLife:
         :return: Список клеток, представленный в виде матрицы
         """
         self.clist = []
-        # PUT YOUR CODE HERE
+        clist = [[0 for i in range(self.cell_width)] for _ in range(self.cell_height)]
+        if randomize:
+            for i in range(self.cell_height):
+                for j in range(self.cell_width):
+                    clist[i][j] = random.randint(0, 1)
+        self.clist = clist
         return self.clist
 
     def draw_cell_list(self, clist):
@@ -72,7 +78,16 @@ class GameOfLife:
 
         :param rects: Список клеток для отрисовки, представленный в виде матрицы
         """
-        pass
+        for i in range(self.cell_height):
+            for j in range(self.cell_width):
+                x = j * self.cell_size + 1
+                y = i * self.cell_size + 1
+                a = self.cell_size - 1
+                b = self.cell_size - 1
+                if self.clist[i][j]:
+                    pygame.draw.rect(self.screen, pygame.Color('green'), (x, y, a, b))
+                else:
+                    pygame.draw.rect(self.screen, pygame.Color('white'), (x, y, a, b))
 
     def get_neighbours(self, cell):
         """ Вернуть список соседей для указанной ячейки
@@ -81,7 +96,15 @@ class GameOfLife:
         :return: Одномерный список ячеек, смежных к ячейке cell
         """
         neighbours = []
-        # PUT YOUR CODE HERE
+        x, y = cell
+        n = self.cell_height - 1
+        m = self.cell_width - 1
+        for i in range(x - 1, x + 2):
+            for j in range(y - 1, y + 2):
+                if not (0 <= i <= n and 0 <= j <= m) or (i == x and j == y):
+                    continue
+                else:
+                    neighbours.append(self.clist[i][j])
         return neighbours
 
     def update_cell_list(self, cell_list):
@@ -93,6 +116,20 @@ class GameOfLife:
         :param cell_list: Игровое поле, представленное в виде матрицы
         :return: Обновленное игровое поле
         """
-        new_clist = []
-        # PUT YOUR CODE HERE
+        new_clist = [[0 for i in range(self.cell_width)] for _ in range(self.cell_height)]
+        for i in range(0, self.cell_height):
+            for j in range(0, self.cell_width):
+                cnt = sum(self.get_neighbours((i, j)))
+                if self.clist[i][j]:
+                    if cnt < 2 or cnt > 3:
+                        new_clist[i][j] = 0
+                else:
+                    if cnt == 3:
+                        new_clist[i][j] = 1
+        self.clist = new_clist
         return self.clist
+
+
+if __name__ == '__main__':
+    game = GameOfLife(320, 240, 20)
+    game.run()
