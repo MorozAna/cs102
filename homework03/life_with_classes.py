@@ -6,24 +6,17 @@ from copy import deepcopy
 
 class GameOfLife:
 
-    def __init__(self, width=640, height=480, cell_size=10, speed=10):
+    def __init__(self, width: int = 640, height: int = 480, cell_size: int = 10, speed: int = 10):
         self.width = width
         self.height = height
         self.cell_size = cell_size
-
-        # Устанавливаем размер окна
         self.screen_size = width, height
-        # Создание нового окна
         self.screen = pygame.display.set_mode(self.screen_size)
-
-        # Вычисляем количество ячеек по вертикали и горизонтали
         self.cell_width = self.width // self.cell_size
         self.cell_height = self.height // self.cell_size
-
-        # Скорость протекания игры
         self.speed = speed
 
-    def draw_grid(self):
+    def draw_grid(self) -> None:
         """ Отрисовать сетку """
         for x in range(0, self.width, self.cell_size):
             pygame.draw.line(self.screen, pygame.Color('black'),
@@ -32,7 +25,17 @@ class GameOfLife:
             pygame.draw.line(self.screen, pygame.Color('black'),
                     (0, y), (self.width, y))
 
-    def run(self):
+    def draw_cell_list(self) -> None:
+        for i in range(self.cell_height):
+            for j in range(self.cell_width):
+                if self.grid.grid[i][j].is_alive():
+                    color = pygame.Color('green')
+                else:
+                    color = pygame.Color('white')
+                pygame.draw.rect(self.screen, color, (
+                    self.cell_size*j, self.cell_size*i, self.cell_size, self.cell_size))
+
+    def run(self) -> None:
         """ Запустить игру """
         pygame.init()
         clock = pygame.time.Clock()
@@ -40,7 +43,7 @@ class GameOfLife:
         self.screen.fill(pygame.Color('white'))
 
         # Создание списка клеток
-        # PUT YOUR CODE HERE
+        self.grid = CellList(self.cell_height, self.cell_width, randomize=True)
 
         running = True
         while running:
@@ -48,50 +51,116 @@ class GameOfLife:
                 if event.type == QUIT:
                     running = False
             self.draw_grid()
-
             # Отрисовка списка клеток
             # Выполнение одного шага игры (обновление состояния ячеек)
-            # PUT YOUR CODE HERE
+            self.draw_cell_list()
+            self.grid.update()
 
             pygame.display.flip()
             clock.tick(self.speed)
         pygame.quit()
 
-
 class Cell:
 
-    def __init__(self, row, col, state=False):
-        pass
+    def __init__(self, row: int, col: int, state: int = False) -> None:
+        self.state = state
+        self.row = row
+        self.col = col
 
-    def is_alive(self):
-        pass
+    def is_alive(self) -> int:
+        return self.state
 
 
 class CellList:
 
-    def __init__(self, nrows, ncols, randomize=False):
-        pass
+    def __init__(self, nrows: int, ncols: int, randomize=False, open_file=False, file_grid: list=[]) -> None:
+        self.nrows = nrows
+        self.ncols = ncols
+        self.grid: list = []
 
-    def get_neighbours(self, cell):
+        if randomize:
+            for i in range(self.nrows):
+                self.grid.append([])
+                for j in range(self.ncols):
+                    self.grid[i].append(Cell(i, j, random.randint(0, 1)))
+        else:
+            for i in range(self.nrows):
+                self.grid.append([])
+                for j in range(self.ncols):
+                    self.grid[i].append(Cell(i, j))
+
+        if open_file:
+            self.grid = file_grid
+
+    def get_neighbours(self, cell) -> list:
         neighbours = []
-        # PUT YOUR CODE HERE
+        row, col = cell.row, cell.col
+        rows = [row - 1, row, row + 1]
+        cols = [col - 1, col, col + 1]
+        for i in rows:
+            if 0 <= i < self.nrows:
+                for j in cols:
+                    if j == col and i == row:
+                        continue
+                    if 0 <= j < self.ncols:
+                        if self.grid[i][j].is_alive():
+                            neighbours.append(Cell(i, j, True))
+                        else:
+                            neighbours.append(Cell(i, j, False))
         return neighbours
 
     def update(self):
-        new_clist = deepcopy(self)
-        # PUT YOUR CODE HERE
+        new_grid = deepcopy(self.grid)
+        for i in range(self.nrows):
+            for j in range(self.ncols):
+                neighbours = sum(c.is_alive() for c in self.get_neighbours(Cell(i, j)))
+                if self.grid[i][j].is_alive():
+                    if neighbours < 2 or neighbours > 3:
+                        new_grid[i][j].state = 0
+                else:
+                    if neighbours == 3:
+                        new_grid[i][j].state = 1
+        self.grid = new_grid
         return self
 
     def __iter__(self):
-        pass
+        self.i_row, self.i_col = 0, 0
+        return self
 
     def __next__(self):
-        pass
+        if self.i_row == self.nrows:
+            raise StopIteration
+        i_grid = self.grid[self.i_row][self.i_col]
+        self.i_col += 1
+        if self.i_col == self.ncols:
+            self.i_col = 0
+            self.i_row += 1
+        return i_grid
 
-    def __str__(self):
-        pass
+    def __str__(self) -> str:
+        str = ""
+        for i in range(self.nrows):
+            for j in range(self.ncols):
+                if (self.grid[i][j].is_alive()):
+                    str += '1 '
+                else:
+                    str += '0 '
+            str += '\n'
+        return str
 
     @classmethod
     def from_file(cls, filename):
-        pass
+        filegrid = []
+        with open(filename) as file:
+            for nrow, line in enumerate(file):
+                row = [Cell(nrow, ncol, int(state))
+                       for ncol, state in enumerate(line) if state in "01"]
+                filegrid.append(row)
+        grid = cls(len(filegrid), len(filegrid[0]))
+        grid.grid = filegrid
+        return grid
 
+
+if __name__ == '__main__':
+    game = GameOfLife(320, 240, 20)
+    game.run()
