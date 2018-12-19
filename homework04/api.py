@@ -53,7 +53,7 @@ def get_friends(user_id, fields):
     return response.json()
 
 
-def messages_get_history(user_id, offset=0, count=20):
+def messages_get_history(user_id, offset=0, count=200):
     """ Получить историю переписки с указанным пользователем
 
     :param user_id: идентификатор пользователя, с которым нужно получить историю переписки
@@ -75,6 +75,6 @@ def messages_get_history(user_id, offset=0, count=20):
         'user_id': user_id,
     }
 
-    query = "{domain}/messages.getHistory?access_token={access_token}&user_id={user_id}&fields={fields}&v=5.53".format(**query_params)
+    query = "{domain}/messages.getHistory?access_token={access_token}&user_id={user_id}&v=5.53".format(**query_params)
     response = requests.get(query)
     return response.json()

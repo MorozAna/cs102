@@ -29,4 +29,4 @@ def age_predict(user_id: int) -> Optional[float]:
     		    da = datetime.datetime(int(d[2]), int(d[1]), int(d[0]))
     		    delta = now - da
     		    fdates.append(delta.days)
-    return (median(fdates) / 365.25)   
+    return median(fdates) / 365.25 
