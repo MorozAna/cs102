@@ -1,7 +1,7 @@
 import requests
 import time
 
-import config
+from config import VK_CONFIG
 
 
 def get(url, params={}, timeout=5, max_retries=5, backoff_factor=0.3):
@@ -37,7 +37,7 @@ def get_friends(user_id, fields):
     assert isinstance(fields, str), "fields must be string"
     assert user_id > 0, "user_id must be positive integer"
     domain = "https://api.vk.com/method"
-    access_token = ''
+    access_token = VK_CONFIG['access_token']
     user_id = user_id
     fields = fields
 
