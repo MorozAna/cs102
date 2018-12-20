@@ -43,6 +43,32 @@ def parse_schedule_for_a_day(web_page, week_day):
     return times_list, locations_list, lessons_list
 
 
+def getNearLesson(schedule):
+    resp = None
+    now = datetime.datetime.now()
+
+    for item in list(schedule):
+        time, location, lesson = item
+        start, end = transformInterval(time)
+        if (now < end):
+            resp = (time, location, lesson)
+            break
+
+    return resp
+
+def transformInterval(interval):
+    now = datetime.datetime.now()
+    start, end = interval.split('-')
+
+    hour, minute = start.split(':')
+    start = now.replace(hour=int(hour), minute=int(minute))
+
+    hour, minute = end.split(':')
+    end = now.replace(hour=int(hour), minute=int(minute))
+
+    return start, end
+
+
 '''@bot.message_handler(commands=['monday'])
 def get_monday(message):
     """ Получить расписание на понедельник """
@@ -87,8 +113,15 @@ def get_schedule(message):
 @bot.message_handler(commands=['near'])
 def get_near_lesson(message):
     """ Получить ближайшее занятие """
-    # PUT YOUR CODE HERE
-    pass
+    _, group = message.text.split()
+    today = datetime.datetime.now()
+    web_page = get_page(group, today.isoweekday())
+    near_lesson = getNearLesson(parse_schedule_for_a_day(web_page, today.isoweekday()))
+    resp = ''
+    for time, location, lession in near_lesson:
+        resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
+
+    bot.send_message(message.chat.id, resp, parse_mode='HTML')
 
 
 @bot.message_handler(commands=['tommorow'])
@@ -97,7 +130,7 @@ def get_tommorow(message):
     _, group = message.text.split()
     today = datetime.datetime.now()
     tommorow = today
-    if (today.weekday() == 5):
+    if (today.isoweekday() == 6):
         tommorow += datetime.timedelta(days=2)
     else:
         tommorow += datetime.timedelta(days=1)
@@ -108,10 +141,10 @@ def get_tommorow(message):
     else:
         week_number = 2
 
-    tommorow_day = tommorow.weekday()
+    tommorow_day = tommorow.isoweekday()
     web_page = get_page(group, week_number)
     times_lst, locations_lst, lessons_lst = \
-        parse_schedule_for_a_day(web_page, tommorow_day + 1)
+        parse_schedule_for_a_day(web_page, tommorow_day)
     resp = ''
     for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
         resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
