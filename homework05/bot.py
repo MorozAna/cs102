@@ -24,18 +24,15 @@ def get_page(group, week=''):
 def parse_schedule_for_a_day(web_page, week_day):
     soup = BeautifulSoup(web_page, "html5lib")
     
-    # Получаем таблицу с расписанием на понедельник
+
     schedule_table = soup.find("table", attrs={"id": "{}day".format(week_day)})
 
-    # Время проведения занятий
     times_list = schedule_table.find_all("td", attrs={"class": "time"})
     times_list = [time.span.text for time in times_list]
 
-    # Место проведения занятий
     locations_list = schedule_table.find_all("td", attrs={"class": "room"})
     locations_list = [room.span.text for room in locations_list]
 
-    # Название дисциплин и имена преподавателей
     lessons_list = schedule_table.find_all("td", attrs={"class": "lesson"})
     lessons_list = [lesson.text.split('\n\n') for lesson in lessons_list]
     lessons_list = [', '.join([info for info in lesson_info if info]) for lesson_info in lessons_list]
@@ -46,10 +43,10 @@ def parse_schedule_for_a_day(web_page, week_day):
 def getNearLesson(schedule):
     resp = None
     now = datetime.datetime.now()
+    time, location, lesson = schedule
 
-    for item in list(schedule):
-        time, location, lesson = item
-        start, end = transformInterval(time)
+    for item in list(time):
+        start, end = transformInterval(item)
         if (now < end):
             resp = (time, location, lesson)
             break
@@ -117,9 +114,9 @@ def get_near_lesson(message):
     today = datetime.datetime.now()
     web_page = get_page(group, today.isoweekday())
     near_lesson = getNearLesson(parse_schedule_for_a_day(web_page, today.isoweekday()))
-    resp = ''
-    for time, location, lession in near_lesson:
-        resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
+    #for time, location, lesson in near_lesson:
+    time, location, lesson = resp
+    resp = '<b>{}</b>, {}, {}\n'.format(time, location, lesson)
 
     bot.send_message(message.chat.id, resp, parse_mode='HTML')
 
