@@ -22,9 +22,13 @@ def extract_news(parser):
     subtext = news_table.findAll("td", class_="subtext")
     for i in subtext:
         sub = i.findAll("a")
-        points = i.find("span", class_="score").text
+        points_text = i.find("span", class_="score").text
+        points, _ = points_text.split(" ")
+        points = int(points)
         author = sub[0].text
         comments = sub[5].text
+        if comments == 'discuss':
+            comments = 0
         not_main.append([comments, author, points])
 
     for i in range(len(main)):
