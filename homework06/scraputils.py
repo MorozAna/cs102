@@ -4,6 +4,9 @@ from bs4 import BeautifulSoup
 
 def extract_news(parser):
     """ Extract news from a given web page """
+    tbl_list = parser.table.findAll('table')
+    news_table = tbl_list[1]
+
     main = []
     not_main = []
     main_list = []
@@ -44,7 +47,12 @@ def extract_news(parser):
 
 def extract_next_page(parser):
     """ Extract next page URL """
-    # PUT YOUR CODE HERE
+    tbl_list = parser.table.findAll('table')
+    news_table = tbl_list[1]
+
+    link = str(news_table.find("a", class_="morelink"))
+    n, o, t, linnk, q, w, e = link.split('"')
+    return linnk
 
 
 def get_news(url, n_pages=1):
