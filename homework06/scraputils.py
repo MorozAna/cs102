@@ -4,11 +4,38 @@ from bs4 import BeautifulSoup
 
 def extract_news(parser):
     """ Extract news from a given web page """
-    news_list = []
+    main = []
+    not_main = []
+    main_list = []
 
-    # PUT YOUR CODE HERE
+    news = news_table.findAll("tr", class_="athing")
+    for i in news:
+        new = i.findAll("td", class_="title")
+        title = new[1].find("a", class_="storylink").text
+        link = new[1].find("span", class_="sitestr")
+        if link == None:
+            link = "No link"
+        else:
+            link = link.text
+        main.append([title, link])
 
-    return news_list
+    subtext = news_table.findAll("td", class_="subtext")
+    for i in subtext:
+        sub = i.findAll("a")
+        points = i.find("span", class_="score").text
+        author = sub[0].text
+        comments = sub[5].text
+        not_main.append([comments, author, points])
+
+    for i in range(len(main)):
+        main_dict = {'author': not_main[i][1],
+                     'comments': not_main[i][0],
+                     'points': not_main[i][2],
+                     'title': main[i][0],
+                     'url': main[i][1]}
+        main_list.append(main_dict)
+
+    return main_list
 
 
 def extract_next_page(parser):
