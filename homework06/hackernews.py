@@ -5,6 +5,7 @@ from bottle import (
 from scraputils import get_news
 from db import News, session
 from bayes import NaiveBayesClassifier
+from sqlalchemy.orm import load_only
 
 
 @route("/news")
@@ -28,7 +29,7 @@ def add_label():
 @route("/update")
 def update_news():
     s = session()
-    current_news = get_news()
+    current_news = get_news("https://news.ycombinator.com/newest")
     existing_news = s.query(News).options(load_only("title", "author")).all()
     existing_t_a = [(news.title, news.author) for news in existing_news]
     for news in current_news:
